@@ -54,7 +54,7 @@ variable "db_spec" {
 
 # module name differentiates between multiple instances of a module
 module "i01" {
-  source = "./lbr-module"
+  source = "github.com/computecanada/terraform-openstack-cc-basic"
 
   keypair = "${var.keypair}"
 
