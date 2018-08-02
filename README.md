@@ -53,17 +53,23 @@ variable "db_spec" {
 }
 
 # module name differentiates between multiple instances of a module
-module "i01" {
+module "lbrs" {
   source = "github.com/computecanada/terraform-openstack-cc-basic"
 
   keypair = "${var.keypair}"
 
   # load balancer/router nodes
   lbr_names = "${var.lbr_names}"
-  lbr_spec = "${var.lbr_spec}"
+  node_spec = "${var.lbr_spec}"
+}
+
+module "dbs" {
+  source = "github.com/computecanada/terraform-openstack-cc-basic"
+
+  keypair = "${var.keypair}"
 
   # first batch of persistent private nodes is database server
   pp_names = "${var.db_names}"
-  pp_spec = "${var.db_spec}"
+  node_spec = "${var.db_spec}"
 }
 ```
