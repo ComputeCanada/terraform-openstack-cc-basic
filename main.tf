@@ -4,16 +4,6 @@ locals {
   pp_count  = "${length(var.pp_names)}"
 }
 
-# This is used to remove and recreate the SSH config
-# TODO: multiple invocations of this module in a given Terraform will invoke
-#       this; not what we want
-resource "null_resource" "cluster" {
-  provisioner "local-exec" {
-    # TODO: use variable for config file
-    command = "rm ssh_config ; touch ssh_config"
-  }
-}
-
 # used to determine the UUID of the desired flavor
 data "openstack_compute_flavor_v2" "node_flavor" {
   name = "${var.node_spec["flavor"]}"
@@ -53,6 +43,10 @@ resource "openstack_compute_instance_v2" "lbr_node" {
     delete_on_termination = true
   }
 
+  metadata {
+    user = "${var.node_spec["user"]}"
+  }
+
   network {
     name = "${var.node_spec["network"]}"
   }
@@ -63,12 +57,6 @@ resource "openstack_compute_floatingip_associate_v2" "lbr_fip" {
   count = "${local.lbr_count}"
   instance_id = "${element(openstack_compute_instance_v2.lbr_node.*.id, count.index)}"
   floating_ip = "${element(openstack_networking_floatingip_v2.lbr_fip.*.address, count.index)}"
-
-  # creation triggers addition of host clause to SSH config
-  provisioner "local-exec" {
-    # TODO: use variable for config file
-    command = "echo 'Host ${element(openstack_compute_instance_v2.lbr_node.*.name, count.index)}\n\tHostname ${element(openstack_networking_floatingip_v2.lbr_fip.*.address, count.index)}\n' >> ssh_config"
-  }
 }
 
 #
@@ -94,13 +82,12 @@ resource "openstack_compute_instance_v2" "pp_node" {
     delete_on_termination = true
   }
 
-  network {
-    name = "${var.node_spec["network"]}"
+  metadata {
+    user     = "${var.node_spec["user"]}"
+    jumphost = "${var.node_spec["jumphost"]}"
   }
 
-  # creation triggers addition of host clause to SSH config
-  provisioner "local-exec" {
-    # TODO: use variable for config file
-    command = "echo 'Host ${self.name}\n\tHostname ${self.network.0.fixed_ip_v4}\n\tProxyCommand ssh -q -W %h ${var.node_spec["jumphost"]}\n' >> ssh_config"
+  network {
+    name = "${var.node_spec["network"]}"
   }
 }

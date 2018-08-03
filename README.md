@@ -72,4 +72,23 @@ module "dbs" {
   pp_names = "${var.db_names}"
   node_spec = "${var.db_spec}"
 }
+
+output "nodes" {
+  description = "Description of created resources"
+  value = {
+    "lbrs" = "${module.lbrs.lbr_nodes}"
+    "dbs"  = "${module.dbs.pp_nodes}"
+  }
+}
+output "iplookup" {
+  description = "Lookup of created resources to IPs"
+  value = "${merge(module.lbrs.iplookup, module.dbs.iplookup)}"
+}
+output "userlookup" {
+  description = "Lookup of node name to user name"
+  value = "${merge(module.lbrs.userlookup, module.dbs.userlookup)}"
+}
+
 ```
+
+It is possible to exploit the module's output as in the above client outputs `nodes`, `iplookup` and `userlookup` using such as `terraform output -json` as input to scripts which can then create configuration files for SSH, Ansible and other tools.

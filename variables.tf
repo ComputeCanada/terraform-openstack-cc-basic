@@ -31,6 +31,10 @@ variable "node_spec" {
     # dynamic collections within resource definitions
     network = "c3tp-collab_network"
 
+    # default user for administrative login, typically "coreos" for Container
+    # Linux, "ubuntu" for Ubuntu, "centos" for CentOS
+    user = "ubuntu"
+
     # pool from which to draw floating IPs
     # (only used for LBR nodes)
     floating_ip_pool = "net04_ext"
