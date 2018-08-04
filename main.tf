@@ -40,7 +40,7 @@ resource "openstack_compute_instance_v2" "lbr_node" {
     volume_size           = "${var.node_spec["rootdisk"]}"
     boot_index            = 0
     destination_type      = "volume"
-    delete_on_termination = true
+    delete_on_termination = "${lookup(var.node_spec, "delete_on_terminate", "false")}"
   }
 
   metadata {
@@ -79,7 +79,7 @@ resource "openstack_compute_instance_v2" "pp_node" {
     volume_size           = "${var.node_spec["rootdisk"]}"
     boot_index            = 0
     destination_type      = "volume"
-    delete_on_termination = true
+    delete_on_termination = "${lookup(var.node_spec, "delete_on_terminate", "false")}"
   }
 
   metadata {
