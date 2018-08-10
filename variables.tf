@@ -45,5 +45,11 @@ variable "node_spec" {
 
     # size of root disk, for use with a persistent flavour
     rootdisk = 10
+
+    # user data which can be used for cloud-init 
+    # (https://cloudinit.readthedocs.io/en/latest/index.html)
+    # this example works well for having your new virtual nodes up-to-date
+    # right off the bat
+    user_data = "#cloud-config\npackage_upgrade: true"
   }
 }

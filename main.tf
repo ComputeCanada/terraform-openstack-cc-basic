@@ -33,6 +33,7 @@ resource "openstack_compute_instance_v2" "lbr_node" {
   flavor_id       = "${data.openstack_compute_flavor_v2.node_flavor.id}"
   key_pair        = "${var.keypair}"
   security_groups = ["default"]
+  user_data       = "${lookup(var.node_spec, "user_data", "")}"
 
   block_device {
     uuid                  = "${data.openstack_images_image_v2.node_image.id}"
@@ -72,6 +73,7 @@ resource "openstack_compute_instance_v2" "pp_node" {
   flavor_id       = "${data.openstack_compute_flavor_v2.node_flavor.id}"
   key_pair        = "${var.keypair}"
   security_groups = ["default"]
+  user_data       = "${lookup(var.node_spec, "user_data", "")}"
 
   block_device {
     uuid                  = "${data.openstack_images_image_v2.node_image.id}"
